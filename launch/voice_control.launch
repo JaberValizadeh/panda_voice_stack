@@ -1,0 +1,37 @@
+<?xml version="1.0"?>
+<!--
+  The voice pipeline alone, against an already-running scene
+  (panda_block_stack environment.launch, or voice_stack.launch here).
+
+      roslaunch panda_voice_stack voice_control.launch
+
+  Set keyboard:=true to skip the microphone and type commands instead.
+-->
+<launch>
+
+  <!-- ALSA capture device for the microphone, e.g. "default" or "hw:0,0" -->
+  <arg name="device" default="default"/>
+  <!-- Vosk model directory. Empty = auto-detect: this package's models/ dir
+       first, then the copy shipped with tb3_voice_control in ~/catkin_ws. -->
+  <arg name="model_path" default=""/>
+  <!-- Software mic amplification (1.0 = none); raise if your mic is quiet -->
+  <arg name="gain" default="2.0"/>
+  <!-- true = no microphone, type commands on stdin instead -->
+  <arg name="keyboard" default="false"/>
+
+  <node pkg="panda_voice_stack" type="voice_recognizer.py"
+        name="voice_recognizer" output="screen"
+        unless="$(arg keyboard)">
+    <param name="device" value="$(arg device)"/>
+    <param name="model_path" value="$(arg model_path)"/>
+    <param name="use_grammar" value="true"/>
+    <param name="gain" value="$(arg gain)"/>
+  </node>
+
+  <!-- Deliberately not required="true": bringing the scene up costs a minute,
+       and you want to be able to restart just the controller (or kill it with
+       rosnode kill) without taking Gazebo, the controllers and MoveIt with it. -->
+  <node pkg="panda_voice_stack" type="voice_arm_control.py"
+        name="voice_arm_control" output="screen"/>
+
+</launch>

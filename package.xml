@@ -1,0 +1,25 @@
+<?xml version="1.0"?>
+<package format="2">
+  <name>panda_voice_stack</name>
+  <version>0.1.0</version>
+  <description>
+    Voice control for the Franka Emika Panda arm: spoken commands are
+    recognized offline with Vosk and turned into MoveIt pick-and-place
+    motions, so blocks A, B and C can be picked up and stacked by talking
+    to the robot. The Gazebo scene comes from panda_block_stack; the
+    recognizer follows the same pattern as tb3_voice_control.
+  </description>
+  <maintainer email="valizadeh.au@gmail.com">Jaber Valizadeh</maintainer>
+  <license>MIT</license>
+
+  <buildtool_depend>catkin</buildtool_depend>
+
+  <exec_depend>rospy</exec_depend>
+  <exec_depend>std_msgs</exec_depend>
+  <exec_depend>geometry_msgs</exec_depend>
+  <exec_depend>gazebo_msgs</exec_depend>
+  <exec_depend>panda_block_stack</exec_depend>
+  <exec_depend>franka_gripper</exec_depend>
+  <exec_depend>moveit_commander</exec_depend>
+  <exec_depend>tf</exec_depend>
+</package>

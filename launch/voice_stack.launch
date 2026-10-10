@@ -1,0 +1,43 @@
+<?xml version="1.0"?>
+<!--
+  All-in-one: the panda_block_stack scene (Gazebo + Panda with grasp-fix +
+  ros_control + MoveIt + RViz, arm idle) plus the voice pipeline.
+
+      roslaunch panda_voice_stack voice_stack.launch
+
+  Then just talk to it: "pick up block A", "stack it on block B", ...
+
+  The scene is reused verbatim from panda_block_stack rather than duplicated,
+  so the world, the URDF wrapper and the grasp-plugin setup stay in one place.
+  The Panda environment must be loaded first, in every terminal - the `panda`
+  function in ~/.bashrc does it:
+
+      panda      # = source ~/moveit_ws/setup_env.bash
+-->
+<launch>
+
+  <arg name="headless"   default="false" doc="Run Gazebo without its GUI"/>
+  <arg name="rviz"       default="true"  doc="Launch RViz with the MoveIt display"/>
+  <arg name="arm_id"     default="panda"/>
+  <arg name="device"     default="default" doc="ALSA capture device"/>
+  <arg name="model_path" default=""      doc="Vosk model dir (empty = auto-detect)"/>
+  <arg name="gain"       default="2.0"   doc="Software mic amplification"/>
+  <arg name="keyboard"   default="false" doc="Type commands instead of speaking"/>
+
+  <!-- run_demo:=false - the scripted stacking task must not run here; the
+       voice node is what drives the arm. -->
+  <include file="$(find panda_block_stack)/launch/stack_blocks.launch">
+    <arg name="headless" value="$(arg headless)"/>
+    <arg name="rviz"     value="$(arg rviz)"/>
+    <arg name="arm_id"   value="$(arg arm_id)"/>
+    <arg name="run_demo" value="false"/>
+  </include>
+
+  <include file="$(find panda_voice_stack)/launch/voice_control.launch">
+    <arg name="device"     value="$(arg device)"/>
+    <arg name="model_path" value="$(arg model_path)"/>
+    <arg name="gain"       value="$(arg gain)"/>
+    <arg name="keyboard"   value="$(arg keyboard)"/>
+  </include>
+
+</launch>
